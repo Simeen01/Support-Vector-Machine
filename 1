@@ -1,0 +1,51 @@
+from sklearn.datasets import make_classification
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn import svm
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+X, y = make_classification(100, 2, 2, 0, weights=[0.5, 0.5], random_state = 0 )
+#print (X)
+#print (y)
+Clf = svm.SVC(kernel='linear', random_state=0)
+Clf.fit(X,y)
+#get the seperating hyperplane
+print (Clf.coef_)
+w = Clf.coef_[0]
+print (w.shape)
+print (w)
+a = -w[0] / w[1]
+#Return evenly spaced numbers over a specified interval.
+#Default are 50 numbers
+xx = np.linspace(-5, 5)
+print (xx)
+yy = a * xx - (Clf.intercept_[0]) / w[1]
+print (yy)
+'''
+support_vectors_ − array-like, shape = [n_SV, n_features]
+It returns the support vectors.
+'''
+#Now plot lines parallel to hyperplane passing through support vectors
+print ('Support vectors ', Clf.support_vectors_)
+b = Clf.support_vectors_[0]
+print (Clf.support_vectors_.shape)
+print ('Support Vectors down', b)
+yy_down = a * xx - (b[1] - a * b[0])
+print (yy_down)
+b = Clf.support_vectors_[1]
+print ('Support Vectors up', b)
+yy_up = a * xx - (b[1] - a * b[0])
+print (yy_up)
+#Import mlxtend to plot decision region
+from mlxtend.plotting import plot_decision_regions
+plot_decision_regions (X, y, clf = Clf)
+#Plot the line, points and nearest vectors to hyperplane
+plt.scatter(Clf.support_vectors_[:, 0], Clf.support_vectors_[:, 1], \
+            s = 80, facecolors = 'none')
+plt.plot(xx, yy_down, 'k--')
+plt.plot(xx, yy_up, 'k')
+plt.xlabel('X1')
+plt.ylabel('X2')
+plt.show()
